@@ -35,12 +35,13 @@ def format_time(sec):
 def get_user_info(username):
     res = requests.get(f"https://osu.ppy.sh/users/{username}", headers=headers)
     soup = BeautifulSoup(res.content, 'html.parser')
-    # print(soup.prettify())
     content_res = soup.find(id="json-user")
     if content_res is None:
-        return None
+        return None, None
     user_info = json.loads(strip(content_res.contents[0]))
-    return user_info
+    content_res = soup.find(id="json-extras")
+    user_extras = json.loads(strip(content_res.contents[0]))
+    return user_info, user_extras
 
 
 # STORAGE METHODS
