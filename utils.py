@@ -3,6 +3,11 @@ import requests
 import json
 from config import shelve_name
 import shelve
+import config
+from shutil import copyfileobj
+from zipfile import ZipFile
+from random import randint
+import os
 
 headers = {
     'Access-Control-Allow-Origin': '*',
@@ -42,6 +47,42 @@ def get_user_info(username):
     content_res = soup.find(id="json-extras")
     user_extras = json.loads(strip(content_res.contents[0]))
     return user_info, user_extras
+
+
+def get_file(file_id, real_filename):
+    res = requests.get(f"https://api.telegram.org/bot{config.TOKEN}/getFile?file_id={file_id}").json()
+    file_path = res["result"]["file_path"]
+    res = requests.get(f"https://api.telegram.org/file/bot{config.TOKEN}/{file_path}", stream=True)
+    with open(real_filename, 'wb') as res_file:
+        copyfileobj(res.raw, res_file)
+    del res
+
+
+def get_song(filename):
+    with ZipFile(f"temp/{filename}.zip", 'r') as z:
+        need_filename = ""
+        fl = 0
+        filenames = z.namelist()
+        for fileName in filenames:
+            if fileName.split('.')[-1] == 'mp3':
+                if fl:
+                    return "err"
+                need_filename = fileName
+                fl = 1
+        z.extract(need_filename, "temp")
+        os.rename(f"temp/{need_filename}", f"temp/{filename}.mp3")
+        return "ok"
+
+
+def delete_temp_files(zip_filename=None, mp3_filename=None):
+    if not (zip_filename is None):
+        os.remove(zip_filename)
+    if not (mp3_filename is None):
+        os.remove(mp3_filename)
+
+
+def generate_filename():
+    return str(randint(100000, 999999))
 
 
 # STORAGE METHODS
