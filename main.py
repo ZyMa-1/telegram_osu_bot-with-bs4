@@ -20,7 +20,9 @@ def help_handler(msg):
           f"/user_best [username]\n" \
           f"returns user top 5 ranks\n\n" \
           f"/set_default [username]\n" \
-          f"sets default username, so you can use commands without username parameter\n"
+          f"sets default username, so you can use commands without username parameter\n\n" \
+          f"/get_song [osz file]\n" \
+          f"return mp3 song file"
     if command == "/start":
         res = f"<b>Hello There</b>\nThis bot was made for osu! community\n\n" + res
     bot.send_message(chat_id, res, parse_mode='HTML')
@@ -79,6 +81,31 @@ def text_handler(msg):
     chat_id = msg.chat.id
     bot.send_message(chat_id, f"I don't understand this command\n"
                               f"Type /help to see list of commands")
+
+
+@bot.message_handler(content_types=['document'])
+def doc_handler(msg):
+    chat_id = msg.chat.id
+    if msg.caption == "/get_song":
+        doc = msg.document
+        filename = doc.file_name
+        file_id = doc.file_id
+        real_filename = utils.generate_filename()
+        if filename.split('.')[-1] != 'osz':
+            bot.send_message(chat_id, "Wrong file extension")
+            return
+        if doc.file_size > 10485760:
+            bot.send_message(chat_id, "File size is too large")
+            return
+        utils.get_file(file_id, f"temp/{real_filename}.zip")
+        check = utils.get_song(real_filename)
+        if check != "ok":
+            bot.send_message(chat_id, "That's more than one song, idk which one you want...")
+            utils.delete_temp_files(zip_filename=f"temp/{real_filename}.zip")
+            return
+        bot.send_audio(chat_id, open(f"temp/{real_filename}.mp3", 'rb'))
+        utils.delete_temp_files(zip_filename=f"temp/{real_filename}.zip", mp3_filename=f"temp/{real_filename}.mp3")
+    return
 
 
 if __name__ == "__main__":
