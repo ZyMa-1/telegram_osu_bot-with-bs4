@@ -24,7 +24,7 @@ def help_handler(msg):
           f"/get_song [osz file]\n" \
           f"return mp3 song file"
     if command == "/start":
-        res = f"<b>Hello There</b>\nThis bot was made for osu! community\n\n" + res
+        res = f"<b>Hello There</b>\nThis bot was made for osu!\n\n" + res
     bot.send_message(chat_id, res, parse_mode='HTML')
 
 
