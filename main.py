@@ -103,7 +103,7 @@ def doc_handler(msg):
             bot.send_message(chat_id, "That's more than one song, idk which one you want...")
             utils.delete_temp_files(zip_filename=f"temp/{real_filename}.zip")
             return
-        bot.send_audio(chat_id, open(f"temp/{real_filename}.mp3", 'rb'))
+        bot.send_document(chat_id, open(f"temp/{real_filename}.mp3", 'rb'), timeout=40)
         utils.delete_temp_files(zip_filename=f"temp/{real_filename}.zip", mp3_filename=f"temp/{real_filename}.mp3")
     return
 
