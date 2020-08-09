@@ -18,7 +18,7 @@ def help_handler(msg):
           f"/user_icon [username]\n" \
           f"get user icon\n\n" \
           f"/user_best [username]\n" \
-          f"returns user top 5 ranks\n\n" \
+          f"returns user top 6 ranks\n\n" \
           f"/set_default [username]\n" \
           f"sets default username, so you can use commands without username parameter\n\n" \
           f"/get_song [osz file]\n" \
@@ -79,6 +79,7 @@ def user_handler(msg):
 @bot.message_handler(content_types=['text'])
 def text_handler(msg):
     chat_id = msg.chat.id
+    # print(chat_id)
     bot.send_message(chat_id, f"I don't understand this command\n"
                               f"Type /help to see list of commands")
 
